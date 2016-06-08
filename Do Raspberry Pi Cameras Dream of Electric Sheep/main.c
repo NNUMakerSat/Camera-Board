@@ -13,15 +13,23 @@
 #include <msp430.h>
 #include <stdint.h>
 #include <stdbool.h>
-//based upon http://www.robot-electronics.co.uk/i2c-tutorial line 16 through 87
+//based upon http://www.robot-electronics.co.uk/i2c-tutorial line 18 through 99
 
-#define SCL
-P1DIR |= 0x06 // I2C bus SCL = P1.6 outputs
-#define SDA
-P1DIR |= 0x07 // SDA = P1.7 outputs
+//#define SCL
+//P1DIR |= 0x06; // I2C bus SCL = P1.6 outputs
+//#define SDA
+//P1DIR |= 0x07; // SDA = P1.7 outputs
 
 //#define SCL_IN     P1DIR |= 0x06 // I2C bus SCL = P1.6
 //#define SDA_IN     P1DIR |= 0x07 // SDA = P1.7
+
+bool SDA;
+bool SCL;
+
+bool SDA_IN;
+bool SCL_IN;
+
+//P1DIR = 1b;		//port 1 is an output // should i do some sort of SDA_IN on dif line?
 
 void i2c_dly(void)
 {					// A slight delay to give a clear sequence between SDA and SCL changes.
@@ -96,7 +104,8 @@ int main(void) {
 
     PM5CTL0 &=~ LOCKLPM5; // Disables high-impedance mode for FRAM memory
 
-    int slaveID[100];		// poorly constructed array
+    int slaveID[12];		// poorly constructed array
+    unsigned int i=0;
 
     // starts segment to read in slave ID
     i2c_start();		// start
@@ -107,8 +116,20 @@ int main(void) {
     i2c_start();		// restarts, preps for reading
     i2c_tx(0x6D);		// read register command
     //ack & data
-    slaveID = i2c_rx(1);	// places slaveID into poorly constructed array
+
+
+   int I2CSAx = 0x00;		// defines register
+    I2CSAx = i2c_rx(1); // collects slave ID
+
+    while(i2c_rx(1)) {
+    slaveID[i] = i2c_rx(1);	// places slaveID into poorly constructed array
+    i++;
+    }
     i2c_stop();
 
 	return 0;
 }
+/* notes
+ * I2CSAx is slave address (bit 9-0) table 26-17
+ *
+ */
