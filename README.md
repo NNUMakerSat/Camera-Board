@@ -1,3 +1,7 @@
+Ov5647 slave ID read-write with MSP430...
+***works and is newwest***
+
+
 OV5647 slave ID start with MSP430FR6989
 Program for MSP430FR6989 to have a I2C Start condition while connected to Raspberry Pi Camera
 ***works***
